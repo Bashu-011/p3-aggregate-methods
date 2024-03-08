@@ -14,6 +14,14 @@ class Student:
 
     def get_enrollments(self):
         return self._enrollments.copy()
+    
+    def aggregate_average_grade(self):
+      # lets assume the grades are stored in a protected attribute called _grades. 
+      total_grades = sum(self._grades.values())
+      num_courses = len(self._grades)
+      average_grade = total_grades / num_courses
+
+      return average_grade
 
 class Course:
     def __init__(self, title):
@@ -45,3 +53,34 @@ class Enrollment:
 
     def get_enrollment_date(self):
         return self._enrollment_date
+    
+    @classmethod
+    def aggregate_enrollments_per_day(cls):
+        enrollment_count = {}
+        for enrollment in cls.all:
+            date = enrollment.get_enrollment_date().date()
+            enrollment_count[date] = enrollment_count.get(date, 0) + 1
+        return enrollment_count
+
+
+student1 = Student("Alice")
+student2 = Student("Bob")
+course1 = Course("Math")
+course2 = Course("English")
+
+# Enroll students in courses with different enrollment dates
+enrollment1 = Enrollment(student1, course1)
+enrollment2 = Enrollment(student2, course2)
+enrollment3 = Enrollment(student1, course2)
+
+# Simulating different enrollment dates
+enrollment1._enrollment_date = datetime.now()
+enrollment2._enrollment_date = datetime.now()
+enrollment3._enrollment_date = datetime.now()
+
+# Aggregate enrollments per day
+enrollment_per_day = Enrollment.aggregate_enrollments_per_day()
+
+# Printing the result
+for date, count in enrollment_per_day.items():
+    print(f"{date}: {count} enrollments")
